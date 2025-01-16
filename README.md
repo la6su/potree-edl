@@ -10,47 +10,6 @@ And of course, suggestions for better/easier APIs or new features, as well as PR
 
 # Usage
 
-```typescript
-import { Scene } from 'three';
-import { PointCloudOctree, Potree } from '@pnext/three-loader';
-
-const scene = new Scene();
-// Manages the necessary state for loading/updating one or more point clouds.
-const potree = new Potree();
-// Show at most 2 million points.
-potree.pointBudget = 2_000_000;
-// List of point clouds which we loaded and need to update.
-const pointClouds: PointCloudOctree[] = [];
-
-potree
-  .loadPointCloud(
-    // The name of the point cloud which is to be loaded.
-    'cloud.js',
-    // Given the relative URL of a file, should return a full URL (e.g. signed).
-    relativeUrl => `${baseUrl}${relativeUrl}`,
-  )
-  .then(pco => {
-    pointClouds.push(pco);
-    scene.add(pco); // Add the loaded point cloud to your ThreeJS scene.
-
-    // The point cloud comes with a material which can be customized directly.
-    // Here we just set the size of the points.
-    pco.material.size = 1.0;
-  });
-
-function update() {
-  // This is where most of the potree magic happens. It updates the visiblily of the octree nodes
-  // based on the camera frustum and it triggers any loads/unloads which are necessary to keep the
-  // number of visible points in check.
-  potree.updatePointClouds(pointClouds, camera, renderer);
-
-  // Render your scene as normal
-  renderer.clear();
-  renderer.render(scene, camera);
-}
-```
-
-You can play with a live example here: https://codesandbox.io/s/yw2p3446j9?autoresize=1&view=preview
 
 # Local Development
 

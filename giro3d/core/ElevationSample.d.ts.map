@@ -1,0 +1,1 @@
+{"version":3,"file":"ElevationSample.d.ts","sourceRoot":"","sources":["../../../src/core/ElevationSample.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,iBAAiB,MAAM,qBAAqB,CAAC;AAEzD;;GAEG;AACH,UAAU,eAAe;IACrB;;OAEG;IACH,MAAM,EAAE,iBAAiB,CAAC;IAC1B;;OAEG;IACH,SAAS,EAAE,MAAM,CAAC;IAClB;;OAEG;IACH,UAAU,EAAE,MAAM,CAAC;CACtB;AAED,eAAe,eAAe,CAAC"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"api.d.ts","sourceRoot":"","sources":["../../../../src/core/geographic/api.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,WAAW,MAAM,eAAe,CAAC;AAC7C,OAAO,KAAK,EAAE,oBAAoB,EAAE,MAAM,eAAe,CAAC;AAC1D,OAAO,KAAK,MAAM,MAAM,UAAU,CAAC;AACnC,OAAO,KAAK,EAAE,gBAAgB,EAAE,MAAM,UAAU,CAAC;AAEjD,OAAO,EAAE,oBAAoB,EAAE,WAAW,EAAE,MAAM,EAAE,gBAAgB,EAAE,CAAC"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"EmptyTexture.d.ts","sourceRoot":"","sources":["../../../src/renderer/EmptyTexture.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,MAAM,OAAO,CAAC;AAEhC,MAAM,CAAC,OAAO,OAAO,YAAa,SAAQ,OAAO;IAC7C,QAAQ,CAAC,cAAc,QAAQ;;CAKlC;AAED,wBAAgB,cAAc,CAAC,GAAG,EAAE,OAAO,GAAG,GAAG,IAAI,YAAY,CAEhE"}

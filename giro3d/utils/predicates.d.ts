@@ -1,0 +1,20 @@
+import type { BufferGeometry, CanvasTexture, ColorRepresentation, DataTexture, Light, Material, Mesh, Object3D, OrthographicCamera, PerspectiveCamera, RenderTarget, Texture, Vector2, Vector3 } from 'three';
+import { Color } from 'three';
+export declare function has<T>(obj: unknown, prop: keyof T): obj is T;
+export declare function isObject3D(obj: unknown): obj is Object3D;
+export declare function isMesh(obj: unknown): obj is Mesh;
+export declare function isLight(obj: unknown): obj is Light;
+export declare function isBufferGeometry(obj: unknown): obj is BufferGeometry;
+export declare function isTexture(obj: unknown): obj is Texture;
+export declare function isRenderTarget(obj: unknown): obj is RenderTarget;
+export declare function isDataTexture(obj: unknown): obj is DataTexture;
+export declare function isCanvasTexture(obj: unknown): obj is CanvasTexture;
+export declare function isPerspectiveCamera(obj: unknown): obj is PerspectiveCamera;
+export declare function isOrthographicCamera(obj: unknown): obj is OrthographicCamera;
+export declare function isMaterial(obj: unknown): obj is Material;
+export declare function isColor(obj: unknown): obj is Color;
+export declare function isVector2(obj: unknown): obj is Vector2;
+export declare function isVector3(obj: unknown): obj is Vector3;
+export declare function isFiniteNumber(obj: unknown): obj is number;
+export declare function getColor(input: ColorRepresentation): Color;
+//# sourceMappingURL=predicates.d.ts.map

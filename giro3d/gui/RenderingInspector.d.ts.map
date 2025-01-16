@@ -1,0 +1,1 @@
+{"version":3,"file":"RenderingInspector.d.ts","sourceRoot":"","sources":["../../../src/gui/RenderingInspector.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,GAAG,MAAM,SAAS,CAAC;AAC/B,OAAO,KAAK,QAAQ,MAAM,kBAAkB,CAAC;AAC7C,OAAO,KAAK,MAAM,SAAS,CAAC;AAE5B,cAAM,kBAAmB,SAAQ,KAAK;IAClC;;;OAGG;gBACS,SAAS,EAAE,GAAG,EAAE,QAAQ,EAAE,QAAQ;CA4BjD;AAED,eAAe,kBAAkB,CAAC"}
