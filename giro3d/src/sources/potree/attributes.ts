@@ -275,11 +275,11 @@ const readPositionCartesian: ReaderGen = (_attribute, attributeOffset, pointByte
     };
 };
 
-const readColor: ReaderGen = (attribute, attributeOffset, pointByteSize) => {
+const readColor: ReaderGen = (_attribute, attributeOffset, pointByteSize) => {
     return (view, pointIndex, target) => {
         const offset = pointIndex * pointByteSize + attributeOffset;
 
-        // Note that we ignore the alpha component (i.e RGBA_PACKED is equivalent to RGB_PACKED)
+        // Note that we ignore the alpha component (i.e. RGBA_PACKED is equivalent to RGB_PACKED)
         const r = view.getUint8(offset + 0);
         const g = view.getUint8(offset + 1);
         const b = view.getUint8(offset + 2);

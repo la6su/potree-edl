@@ -274,7 +274,7 @@ async function parseIndexFile(
 }
 
 function createPotreeWorker(): Worker {
-    const worker = new Worker(new URL('./potree/worker.js', import.meta.url), {
+    const worker = new Worker(new URL('../../sources/potree/worker.js', import.meta.url), {
         type: 'module',
     });
 

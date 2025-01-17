@@ -2,12 +2,12 @@ import { Color, BoxGeometry, MeshBasicMaterial, DirectionalLight, Fog, Hemispher
 // noinspection JSFileReferences
 import { MapControls } from 'three/examples/jsm/controls/MapControls';
 // import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import Instance from '../giro3d/core/Instance';
-import ColorMap from '../giro3d/core/ColorMap';
-import PointCloud from '../giro3d/entities/PointCloud';
-import Inspector from '../giro3d/gui/Inspector';
-import PotreeSource from "../giro3d/sources/PotreeSource";
-import {setLazPerfPath} from '../giro3d/sources/las/config';
+import Instance from '../giro3d/src/core/Instance';
+import ColorMap from '../giro3d/src/core/ColorMap';
+import PointCloud from '../giro3d/src/entities/PointCloud';
+import Inspector from '../giro3d/src/gui/Inspector';
+import PotreeSource from "../giro3d/src/sources/PotreeSource";
+import {setLazPerfPath} from '../giro3d/src/sources/las/config';
 import colormap from 'colormap';
 function bindColorPicker(id, onChange) {
     const element = document.getElementById(id);
