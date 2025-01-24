@@ -20,10 +20,8 @@ export default class RenderPipeline {
     pointCloudRenderer?: PointCloudRenderer;
     /**
      * @param renderer - The WebGL renderer.
-     * @param scene
-     * @param camera
      */
-    constructor(renderer: WebGLRenderer, scene: Object3D, camera: Camera);
+    constructor(renderer: WebGLRenderer);
     prepareRenderTargets(width: number, height: number, samples: number): {
         composer: EffectComposer;
         target: WebGLRenderTarget;

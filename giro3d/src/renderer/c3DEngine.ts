@@ -96,6 +96,7 @@ function createRenderer(target: HTMLDivElement, options?: WebGLRendererParameter
             antialias: options?.antialias ?? true,
             alpha: options?.alpha ?? true,
             logarithmicDepthBuffer: options?.logarithmicDepthBuffer ?? false,
+            // preserveDrawingBuffer: true
         });
 
         // Necessary to enable clipping planes per-entity or per-object, rather
@@ -304,7 +305,7 @@ class C3DEngine {
      */
     renderUsingCustomPipeline(scene: Object3D, camera: Camera) {
         if (!this._renderPipeline) {
-            this._renderPipeline = new RenderPipeline(this.renderer);
+            this._renderPipeline = new RenderPipeline(this.renderer, scene as Scene, camera);
         }
 
         this._renderPipeline.render(scene, camera, this.width, this.height, this.renderingOptions);

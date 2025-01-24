@@ -16,11 +16,17 @@ import {
     WebGLRenderTarget,
 } from 'three';
 import { isOrthographicCamera, isPerspectiveCamera } from '../utils/predicates';
+// @ts-ignore
 import BasicVS from './shader/BasicVS.glsl';
+// @ts-ignore
 import EDLPassOneFS from './shader/pointcloud/EDLPassOneFS.glsl';
+// @ts-ignore
 import EDLPassTwoFS from './shader/pointcloud/EDLPassTwoFS.glsl';
+// @ts-ignore
 import EDLPassZeroFS from './shader/pointcloud/EDLPassZeroFS.glsl';
+// @ts-ignore
 import InpaintingFS from './shader/pointcloud/InpaintingFS.glsl';
+// @ts-ignore
 import OcclusionFS from './shader/pointcloud/OcclusionFS.glsl';
 
 const RT = {

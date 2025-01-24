@@ -1,4 +1,4 @@
-import { Color, BoxGeometry, MeshBasicMaterial, DirectionalLight, Fog, HemisphereLight, MathUtils, Mesh, MeshPhongMaterial, PlaneGeometry, Vector3, GridHelper } from 'three';
+import { Color, BoxGeometry, DirectionalLight, Fog, HemisphereLight, MathUtils, Mesh, MeshPhongMaterial, Vector3, GridHelper } from 'three';
 // noinspection JSFileReferences
 import { MapControls } from 'three/examples/jsm/controls/MapControls';
 // import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -7,7 +7,9 @@ import ColorMap from '../giro3d/src/core/ColorMap';
 import PointCloud from '../giro3d/src/entities/PointCloud';
 import Inspector from '../giro3d/src/gui/Inspector';
 import PotreeSource from "../giro3d/src/sources/PotreeSource";
-import {setLazPerfPath} from '../giro3d/src/sources/las/config';
+
+
+import { setLazPerfPath } from '../giro3d/src/sources/las/config';
 import colormap from 'colormap';
 function bindColorPicker(id, onChange) {
     const element = document.getElementById(id);
@@ -245,8 +247,8 @@ function updateActiveAttribute() {
         : "none";
     colorMapGroup.style.display =
         !shouldDisplayClassifications &&
-        attribute !== "Color" &&
-        attribute !== "COLOR_PACKED"
+            attribute !== "Color" &&
+            attribute !== "COLOR_PACKED"
             ? "flex"
             : "none";
 
@@ -407,11 +409,11 @@ async function load(url) {
     instance.renderingOptions.enablePointCloudOcclusion = false;
     entity = new PointCloud({ source });
 
-// we can access the THREE.js scene directly
+    // we can access the THREE.js scene directly
     instance.scene.background = new Color(0xa0a0a0);
     instance.scene.fog = new Fog(0xa0a0a0, 15, 80);
 
-// adding lights directly to scene is ok
+    // adding lights directly to scene is ok
     const hemiLight = new HemisphereLight(0xffffff, 0x444444, 2);
     hemiLight.position.set(0, 0, 20);
     hemiLight.updateMatrixWorld();
@@ -435,26 +437,25 @@ async function load(url) {
     grid.updateMatrixWorld(true);
 
     const geometry = new BoxGeometry(5, 5, 5);
-    const material = new MeshPhongMaterial({color: 0x00ff00});
+    const material = new MeshPhongMaterial({ color: 0x00ff00 });
     const cube = new Mesh(geometry, material);
     cube.name = 'myCube';
 
     cube.receiveShadow = true;
     cube.castShadow = true;
-
-
-    const mesh = new Mesh(
-        new PlaneGeometry(20, 20),
-        new MeshPhongMaterial({ color: 0xcccccc, depthWrite: true }),
-    );
-    mesh.position.set(0.0, 0.001, 0.0);
-    mesh.receiveShadow = true;
+    instance.add(cube);
+    // const mesh = new Mesh(
+    //     new PlaneGeometry(20, 20),
+    //     new MeshPhongMaterial({ color: 0xcccccc, depthWrite: true }),
+    // );
+    // mesh.position.set(0.0, 0.001, 0.0);
+    // mesh.receiveShadow = true;
 
     try {
         await instance.add(entity);
         await instance.add(grid);
-        await instance.add(mesh);
-        await instance.add(cube);
+        // await instance.add(mesh);
+
     } catch (err) {
         if (err instanceof Error) {
             const messageElement = document.getElementById("message");
@@ -475,10 +476,11 @@ async function load(url) {
     instance.addEventListener("update-end", () => {
         updateDisplayedPointCounts(entity.pointCount, entity.displayedPointCount);
 
-        // console.log("render");
-});
+    });
 
     placeCameraOnTop(entity.getBoundingBox(), instance);
+
+
 
     setAvailableAttributes(
         metadata.attributes.map((att, index) => ({
@@ -600,6 +602,3 @@ function addClassification(number, name, array) {
 }
 
 load(datasetUrl).catch(console.error);
-
-
-

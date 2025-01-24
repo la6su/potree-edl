@@ -198,7 +198,7 @@ class C3DEngine {
    */
   renderUsingCustomPipeline(scene, camera) {
     if (!this._renderPipeline) {
-      this._renderPipeline = new RenderPipeline(this.renderer, scene, camera);
+      this._renderPipeline = new RenderPipeline(this.renderer);
     }
     this._renderPipeline.render(scene, camera, this.width, this.height, this.renderingOptions);
   }

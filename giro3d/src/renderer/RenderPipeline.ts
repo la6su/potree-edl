@@ -1,8 +1,18 @@
-import type { Camera, Material, Object3D, WebGLRenderer } from 'three';
-import { Color, DepthTexture, FloatType, NearestFilter, WebGLRenderTarget } from 'three';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
-import { TexturePass } from 'three/examples/jsm/postprocessing/TexturePass.js';
+import {BlendFunction, EffectComposer, EffectPass, OutlineEffect, ShaderPass} from 'postprocessing';
+import {
+    Camera,
+    Color,
+    DepthTexture,
+    FloatType,
+    Material,
+    NearestFilter,
+    Object3D, Raycaster,
+    Scene,
+    ShaderMaterial, Vector2,
+    WebGLRenderer,
+    WebGLRenderTarget
+} from 'three';
+
 import type PointCloud from '../core/PointCloud';
 import PointCloudRenderer from './PointCloudRenderer';
 import type RenderingOptions from './RenderingOptions';
@@ -50,22 +60,49 @@ function clear(renderer: WebGLRenderer) {
 /**
  * A render pipeline that supports various effects.
  */
+
 export default class RenderPipeline {
     renderer: WebGLRenderer;
     buckets: Object3DWithMaterial[][];
     sceneRenderTarget: WebGLRenderTarget | null;
-    effectComposer?: EffectComposer;
+    effectComposer!: EffectComposer;
+    outlineEffect?: OutlineEffect;
     pointCloudRenderer?: PointCloudRenderer;
+    scene: Scene;
+    camera: Camera;
+    private selectedObjects: any[];
+    private raycaster: Raycaster;
+    private readonly mouse: Vector2;
 
     /**
      * @param renderer - The WebGL renderer.
+     * @param scene
+     * @param camera
      */
-    constructor(renderer: WebGLRenderer) {
+    constructor(renderer: WebGLRenderer, scene: Scene, camera: Camera) {
         this.renderer = renderer;
-
+        this.scene = scene;
+        this.camera = camera;
         this.buckets = [[], [], []];
 
         this.sceneRenderTarget = null;
+
+        this.selectedObjects = [];
+        this.raycaster = new Raycaster();
+        this.mouse = new Vector2();
+
+        this.renderer.domElement.style.touchAction = "none";
+        this.renderer.domElement.addEventListener("pointerdown", (event) => {
+            if (!event.isPrimary) {
+                return;
+            }
+
+            this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            this.checkIntersection();
+        });
+
     }
 
     prepareRenderTargets(width: number, height: number, samples: number) {
@@ -78,8 +115,6 @@ export default class RenderPipeline {
             this.sceneRenderTarget?.dispose();
             this.effectComposer?.dispose();
 
-            const depthBufferType = FloatType;
-
             // This is the render target that the initial rendering of scene will be:
             // opaque, transparent and point cloud buckets render into this.
             this.sceneRenderTarget = new WebGLRenderTarget(width, height, {
@@ -88,17 +123,49 @@ export default class RenderPipeline {
                 minFilter: NearestFilter,
                 depthBuffer: true,
                 samples,
-                depthTexture: new DepthTexture(width, height, depthBufferType),
+                depthTexture: new DepthTexture(width, height, FloatType),
             });
 
             this.effectComposer = new EffectComposer(this.renderer);
 
+            this.outlineEffect = new OutlineEffect(this.scene, this.camera, {
+                blendFunction: BlendFunction.ADD,
+                multisampling: Math.min(4, this.renderer.capabilities.maxSamples),
+                edgeStrength: 10,
+                pulseSpeed: 0.0,
+                visibleEdgeColor: 0xffffff,
+                hiddenEdgeColor: 0x22090a,
+                height: 480,
+                blur: false,
+                xRay: true
+            });
+
             // After the buckets have been rendered into the render target,
             // the effect composer will render this render target to the canvas.
-            this.effectComposer.addPass(new TexturePass(this.sceneRenderTarget.texture));
+            this.effectComposer.addPass(new ShaderPass(new ShaderMaterial({
+                uniforms: {
+                    tDiffuse: {value: this.sceneRenderTarget.texture}
+                },
+                vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+                fragmentShader: `
+                uniform sampler2D tDiffuse;
+                varying vec2 vUv;
+                void main() {
+                    gl_FragColor = texture2D(tDiffuse, vUv);
+                }
+            `
+            })));
 
             // Final pass to output to the canvas (including colorspace transformation).
-            this.effectComposer.addPass(new OutputPass());
+            const outlinePass = new EffectPass(this.camera, this.outlineEffect);
+            this.effectComposer.addPass(outlinePass);
+
         }
 
         return {
@@ -127,7 +194,7 @@ export default class RenderPipeline {
         const requiredSamples = 4; // No need for more
         const samples = options.enableMSAA ? Math.min(maxSamples, requiredSamples) : 0;
 
-        const { composer, target } = this.prepareRenderTargets(width, height, samples);
+        const {composer, target} = this.prepareRenderTargets(width, height, samples);
 
         renderer.setRenderTarget(this.sceneRenderTarget);
 
@@ -157,6 +224,7 @@ export default class RenderPipeline {
     /**
      * @param scene - The scene to render.
      * @param camera - The camera.
+     * @param target - The WebGLRender target.
      * @param meshes - The meshes to render.
      * @param opts - The rendering options.
      */
@@ -186,29 +254,27 @@ export default class RenderPipeline {
         pcr.occlusion.enabled = opts.enablePointCloudOcclusion;
 
         setVisibility(meshes, true);
-
         pcr.render(scene, camera, target);
-
         setVisibility(meshes, false);
     }
+
 
     /**
      * @param scene - The scene to render.
      * @param camera - The camera.
      * @param meshes - The meshes to render.
      */
+    // @ts-ignore
     renderMeshes(scene: Object3D, camera: Camera, meshes: Object3DWithMaterial[]) {
         if (meshes.length === 0) {
             return;
         }
 
-        const renderer = this.renderer;
+        // const renderer = this.renderer;
 
         setVisibility(meshes, true);
-
-        renderer.render(scene, camera);
-
-        setVisibility(meshes, false);
+        this.effectComposer.render();
+        // setVisibility(meshes, false);
     }
 
     onAfterRender() {
@@ -249,4 +315,26 @@ export default class RenderPipeline {
             }
         });
     }
+
+    addSelectedObject = (object: Object3D) => {
+        this.selectedObjects = [];
+        this.selectedObjects.push(object);
+        if (this.outlineEffect) {
+            this.outlineEffect['selection'].set(this.selectedObjects);
+            console.log(this.outlineEffect['selection']);
+        }
+    };
+
+    checkIntersection = () => {
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        const myCube = this.scene.getObjectByName("myCube");
+        if (!myCube) return;
+            const intersects = this.raycaster.intersectObject(myCube, true);
+            if (intersects.length > 0) {
+                const selectedObject = intersects[0].object;
+                if(selectedObject !== undefined) {
+                    this.addSelectedObject(selectedObject);
+                }
+            }
+        }
 }
